@@ -24,9 +24,9 @@ PyConfig includes a couple C#-inspired file management functions to the table su
 And more!
 
 # How to install
-1. Download this file and extract its contents into your project.
+1. Download this file and extract its contents into your project:
 
 https://github.com/PytholIsCool/PyConfig/tree/main/PyConfig/PyConfig
 
-2. Include PyConfig/Includes.h
+2. Include PyConfig/API_Includes.h in the files that you wish to use PyConfig in.
 3. Enjoy!
