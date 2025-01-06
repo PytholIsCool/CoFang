@@ -22,3 +22,9 @@ PyConfig includes a couple C#-inspired file management functions to the table su
 - File.Exists()
 - File.Create()
 And more!
+
+# How to install
+1. Download this file and extract its contents into your project.
+https://github.com/PytholIsCool/PyConfig/tree/main/PyConfig/PyConfig
+2. Include PyConfig/Includes.h
+3. Enjoy!
