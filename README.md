@@ -1,5 +1,5 @@
 # PyConfig
-
+*This is my first ever major C++ project so it'll recieve a lot more polish as time goes on. I'm more than certain I can improve effeciency and memory usage.*
 # What is PyConfig?
 PyConfig is a universal C++ config system meant for gui applications, dlls, console applications, ect.
 It's purpose is to simplify the process of using a config as much as possible.
