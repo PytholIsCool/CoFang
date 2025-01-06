@@ -31,3 +31,5 @@ https://github.com/PytholIsCool/PyConfig/tree/main/PyConfig/PyConfig
 
 2. Include PyConfig/API_Includes.h in the files that you wish to use PyConfig in.
 3. Enjoy!
+
+I will be removing the built-in optional fields as they are redundant. 
