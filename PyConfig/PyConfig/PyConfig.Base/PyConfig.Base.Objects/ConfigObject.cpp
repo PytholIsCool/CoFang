@@ -1,4 +1,4 @@
-#include "ConfigObject.h" // Entirely reworked this class as I wasn't happy with how over-engineered it was
+#include "ConfigObject.h"
 
 std::unordered_map<std::string, ConfigObject*> ConfigObject::ConfigRegistry;
 
@@ -22,11 +22,16 @@ ConfigObject& ConfigObject::AddField(const std::string& fieldName, const std::va
     if (fieldName.contains(':'))
         throw std::runtime_error("Colons are not permitted for field names.");
     this->Fields.emplace(fieldName, type);
+
+    this->Serialized = false;
+
     return *this;
 }
 void ConfigObject::RemoveField(const std::string& fieldName) {
-    if (this->FieldExists(fieldName))
+    if (this->FieldExists(fieldName)) {
         this->Fields.erase(fieldName);
+        this->Serialized = false;
+    }
 }
 bool ConfigObject::FieldExists(const std::string& fieldName) const {
     return this->Fields.contains(fieldName);
