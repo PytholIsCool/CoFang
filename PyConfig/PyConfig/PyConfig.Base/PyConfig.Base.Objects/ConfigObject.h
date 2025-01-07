@@ -8,7 +8,7 @@
 #include <memory>
 #include <unordered_map>
 #include <variant>
-
+// Entirely reworked this class as I wasn't happy with how over-engineered it was
 class ConfigObject {
 private:
     std::string Identifier;
