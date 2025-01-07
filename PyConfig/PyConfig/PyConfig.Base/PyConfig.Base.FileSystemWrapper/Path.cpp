@@ -52,6 +52,8 @@ std::filesystem::path Path::GetFolderPath(const SpecialFolder& folder) {
         return GetEnvironmentPath("LOCALAPPDATA").parent_path() / "LocalLow";
     case SpecialFolder::Roaming:
         return GetEnvironmentPath("APPDATA");                       // Roaming
+    case SpecialFolder::Application:
+        return std::filesystem::current_path();                     // Application
     default:
         throw std::invalid_argument("Unknown SpecialFolder type.");
     }
