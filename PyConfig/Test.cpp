@@ -6,7 +6,7 @@
 using SpecialFolder = Path::SpecialFolder;
 
 static const std::string CfgPath = R"(C:\1TestFig\AdditionalFile\UserData.pycfg)";
-// Crude example of what can be done with the API and how it's used.
+// Crude example of what can be done with the api
 int main() {
     if (File::Exists(CfgPath)) {
         ConfigObject TestObj("User");
@@ -35,7 +35,6 @@ int main() {
 
         std::cout << "CustomChar is: " << TestObj.GetField<char>("CustomChar") << "\n"; // Works
         std::cout << "CustomString is: " << TestObj.GetField<std::string>("CustomString") << "\n"; // Works
-        std::cout << "StringWithFloat is: " << TestObj.GetField<std::string>("StringWithFloat") << "\n"; // Works
 
         return 0;
     }
@@ -70,6 +69,14 @@ int main() {
 
     Serialization::Serialize(TestObj, CfgPath);
     Serialization::Serialize(Test, CfgPath);
+
+    std::getline(std::cin, retrievedVal);
+
+    TestObj.RemoveField("StringWithFloat");
+
+    Serialization::Serialize(TestObj, CfgPath);
+
+    std::getline(std::cin, retrievedVal);
 
     return 0;
 }
