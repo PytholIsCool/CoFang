@@ -15,11 +15,12 @@ int main() {
         Serialization::Deserialize(TestObj, CfgPath);
         Serialization::Deserialize(Test, CfgPath);
 
-        std::cout << "AppData: " << Path::GetFolderPath(SpecialFolder::AppData) << '\n';
-        std::cout << "Temp: " << Path::GetFolderPath(SpecialFolder::Temp) << '\n';
-        std::cout << "Local: " << Path::GetFolderPath(SpecialFolder::Local) << '\n';
-        std::cout << "LocalLow: " << Path::GetFolderPath(SpecialFolder::LocalLow) << '\n';
-        std::cout << "Roaming: " << Path::GetFolderPath(SpecialFolder::Roaming) << '\n';
+        std::cout << "AppData: " << Path::GetFolderPath(SpecialFolder::AppData) << "\n";
+        std::cout << "Temp: " << Path::GetFolderPath(SpecialFolder::Temp) << "\n";
+        std::cout << "Local: " << Path::GetFolderPath(SpecialFolder::Local) << "\n";
+        std::cout << "LocalLow: " << Path::GetFolderPath(SpecialFolder::LocalLow) << "\n";
+        std::cout << "Roaming: " << Path::GetFolderPath(SpecialFolder::Roaming) << "\n";
+        std::cout << "Application: " << Path::GetFolderPath(SpecialFolder::Application) << "\n";
 
         std::cout << "Test is: " << Test.GetField<std::string>("Test") << "\n";
 
