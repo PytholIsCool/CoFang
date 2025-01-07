@@ -8,11 +8,15 @@
 #include <memory>
 #include <unordered_map>
 #include <variant>
-// Entirely reworked this class as I wasn't happy with how over-engineered it was
+
 class ConfigObject {
 private:
+    bool Serialized = false;
+
     std::string Identifier;
     static std::unordered_map<std::string, ConfigObject*> ConfigRegistry;
+
+    friend class Serialization;
 public:
     std::unordered_map<std::string, std::variant<int, long, float, double, bool, char, std::string>> Fields;
 
@@ -21,44 +25,55 @@ public:
     ConfigObject(const std::string& id) : Identifier(id) {
         if (ConfigRegistry.find(id) != ConfigRegistry.end())
             throw std::runtime_error("Identifier already exists.");
+        Serialized = false;
         ConfigRegistry[id] = this;
     }
     // Destructor
-    ~ConfigObject() {
-        Fields.clear();
-        ConfigRegistry.erase(Identifier);
+    ~ConfigObject() {                                        // std::unordered_map.clear() already checks of the map is empty
+        Serialized = false;
+        Fields.clear();                                      // Clear out the fields attached to the object
+        ConfigRegistry.erase(Identifier);                    // Erase the object from the registry
     }
     // Copy handler
     ConfigObject(const ConfigObject& other) : Identifier(other.Identifier + "_copy"), Fields(other.Fields) {
-        while (ConfigRegistry.contains(Identifier))                    // If the registry already contains the ID
-            Identifier = Identifier.append("_copy");                   // Keep edding the _copy prefix until it can copy the object again
-        ConfigRegistry[Identifier] = this;                             // Updates the ID so that the registry can differenciate between the 2
+        while (ConfigRegistry.contains(Identifier))          // If the registry already contains the ID
+            Identifier = Identifier.append("_copy");         // Keep edding the _copy prefix until it can copy the object again
+        ConfigRegistry[Identifier] = this;                   // Updates the ID so that the registry can differenciate between the 2
+        Serialized = false;
     }
     // Copy assignment handler
-    ConfigObject& operator=(const ConfigObject& other) {               // Handles any copy assignments
-        if (this == &other) return *this;                              // Prevents self assignments
+    ConfigObject& operator=(const ConfigObject& other) {     // Handles any copy assignments
+        if (this == &other) return *this;                    // Prevents self assignments
 
-        ConfigRegistry.erase(Identifier);                              // Erases the original object
+        ConfigRegistry.erase(Identifier);                    // Erases the original object
 
-        Identifier = other.Identifier + "_copy";                       // Gives a new ID to the copy
+        Identifier = other.Identifier + "_copy";             // Gives a new ID to the copy
         while (ConfigRegistry.contains(Identifier))
-            Identifier = Identifier.append("_copy");                   // Keep edding the _copy prefix until it can copy the object again
+            Identifier = Identifier.append("_copy");         // Keep edding the _copy prefix until it can copy the object again
 
         Fields = other.Fields;
-        ConfigRegistry[Identifier] = this;                             // Updates the registry
+        ConfigRegistry[Identifier] = this;                   // Updates the registry
+
+        Serialized = false;
 
         return *this;
     }
     // Move handler
-    ConfigObject(ConfigObject&& other) noexcept
+    ConfigObject(ConfigObject&& other) noexcept              // Transfer the identifier and the contents of the field map
         : Identifier(std::move(other.Identifier)), Fields(std::move(other.Fields)) {
         ConfigRegistry[Identifier] = this;
-        other.Identifier = "";
+
+        if (other.Serialized)
+            Serialized = true;
+        else
+            Serialized = false;
+
+        ConfigRegistry.erase(other.Identifier);              // Remove the other object from the registry
     }
 #pragma endregion
 
 #pragma region Operators
-    ConfigObject& operator=(ConfigObject&& other) noexcept {           // =
+    ConfigObject& operator=(ConfigObject&& other) noexcept { // =
         if (this == &other) return *this;
 
         ConfigRegistry.erase(Identifier);
@@ -70,7 +85,7 @@ public:
 
         return *this;
     }
-    ConfigObject* operator=(ConfigObject* other) noexcept {            // =
+    ConfigObject* operator=(ConfigObject* other) noexcept {  // =
         if (this == other) return this;
 
         if (other == nullptr) return this;
@@ -84,11 +99,11 @@ public:
 
         return this;
     }
-    bool operator==(const ConfigObject& other) const {                 // ==
+    bool operator==(const ConfigObject& other) const {       // ==
         return this->Identifier == other.Identifier;
     }
 
-    bool operator==(const ConfigObject* other) const {                 // ==
+    bool operator==(const ConfigObject* other) const {       // ==
         if (other == nullptr) return false;
         return this->Identifier == other->Identifier;
     }
@@ -116,7 +131,6 @@ public:
 class ConfigObject;
 
 ConfigObject& operator<<(ConfigObject& obj, const std::pair<std::string, std::variant<int, long, float, double, bool, char, std::string>>& field);
-//template <typename T>
 const int operator>>(ConfigObject& obj, const std::pair<std::string, int>& fieldInfo);
 const long operator>>(ConfigObject& obj, const std::pair<std::string, long>& fieldInfo);
 
@@ -127,7 +141,6 @@ const bool operator>>(ConfigObject& obj, const std::pair<std::string, bool>& fie
 
 const char operator>>(ConfigObject& obj, const std::pair<std::string, char>& fieldInfo);
 const std::string operator>>(ConfigObject& obj, const std::pair<std::string, std::string>& fieldInfo);
-
 
 #endif
 
