@@ -1,48 +1,63 @@
 #include "Serialization.h"
 #include "PyConfig.Base.FileSystemWrapper/File.h"
 #include <string>
+#include <regex>
 
 #pragma region Serialization
 void Serialization::Serialize(ConfigObject& obj, const std::string& path) {
-	std::fstream configFile;
-	if (File::Exists(path)) {
-		configFile.open(path, std::ios::out | std::ios::app);
+	if (obj.Serialized)													// If the object has already been serialized (and is up to date), return
+		return;															
+	                                                                    
+	if (File::Exists(path)) {	                                        // If the file exists:
+		std::ifstream configFileIn(path);                               // Read the contents of the file
+		std::stringstream buffer;                                       
+		buffer << configFileIn.rdbuf();                                 // Write the contents of the file to the buffer
+		std::string fileContent = buffer.str();                         // Conver the contents of the buffer to a regular string
+		configFileIn.close();                                           // Close the file as it's no longer needed
+
+		if (fileContent.contains("  ConfigID: " + obj.GetID())) {		// Notes at the bottom of the file
+			std::regex configRegex(R"(\{\s*ConfigID:\s*)" + obj.GetID() + R"(\s*[^}]*\}\s*)");
+			fileContent = std::regex_replace(fileContent, configRegex, "");
+																		// Remove the old contents of the file corrosponding with the object parameter
+			std::ofstream configFileOut(path, std::ios::trunc);         // Open the file for writing (overwrite/truncate mode)
+			configFileOut << fileContent;								// Write the cleaned content back
+		}
 	}
 	else
-		configFile = File::Create(path);
-		
+		File::Create(path);											    // If the file doesn't exist, create it
 
-	if (!obj.Fields.empty()) {
-		configFile << "{\n" << "  ConfigID: " << obj.GetID() << "\n";
+	std::ofstream configFile(path, std::ios::app);                      // Open soley for appending
+	configFile << "{\n" << "  ConfigID: " << obj.GetID() << "\n";
 
-		for (const auto& [fieldName, fieldValue] : obj.Fields) {
-			configFile << "  " << fieldName << ": ";
-			std::visit([&](auto& value) {
-				if constexpr (std::is_same_v<std::decay_t<decltype(value)>, int>)
-					configFile << std::to_string(value) << "\n";
-				else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, long>)
-					configFile << std::to_string(value) << "L\n";
+	for (const auto& [fieldName, fieldValue] : obj.Fields) {
+		configFile << "  " << fieldName << ": ";
+		std::visit([&](auto& value) {
+			if constexpr (std::is_same_v<std::decay_t<decltype(value)>, int>)
+				configFile << std::to_string(value) << "\n";
+			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, long>)
+				configFile << std::to_string(value) << "L\n";
 
-				else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, float>)
-					configFile << std::to_string(value) << "f\n";
-				else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, double>)
-					configFile << std::to_string(value) << "D\n";
+			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, float>)
+				configFile << std::to_string(value) << "f\n";
+			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, double>)
+				configFile << std::to_string(value) << "D\n";
 
-				else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, bool>)
-					configFile << (value == 1 ? R"('true')" : R"('false')") << "\n";
+			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, bool>)
+				configFile << (value == 1 ? R"('true')" : R"('false')") << "\n";
 
-				else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, char>)
-					configFile << std::string(1, value) << "\n";
-				else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, std::string>)
-					configFile << "\"" << value << "\"" << "\n";
-				else
-					throw std::runtime_error("Invalid data type found. Please review your fields.");  
-				}, fieldValue);
-		}
-		configFile << "}\n\n";
+			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, char>)
+				configFile << std::string(1, value) << "\n";
+			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, std::string>)
+				configFile << "\"" << value << "\"" << "\n";
+			else
+				throw std::runtime_error("Invalid data type found. Please review your fields.");
+			}, fieldValue);
 	}
+	configFile << "}\n\n";
 
 	configFile.close();
+
+	obj.Serialized = true;
 }
 #pragma endregion
 
@@ -138,3 +153,10 @@ void Serialization::Deserialize(ConfigObject& obj, const std::string& path) {
 // Templates are sexy
 // std::decay_t<decltype(value goes here)> is an efficient way of getting a variable's type
 // std::is_same_v is good for comparing types
+// 
+// std::regex notation stuff:
+// 
+// { is a special character in regex so we escape it as "\{"
+// same with }
+// \s* represents white space or empty space. This can be a new line or series of actual spaces
+// [^}]* represents any and all characters that aren't "}". That's how we can find the fields without explicitly looking for them
