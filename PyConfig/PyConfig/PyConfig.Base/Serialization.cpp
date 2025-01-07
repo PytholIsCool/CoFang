@@ -144,6 +144,8 @@ void Serialization::Deserialize(ConfigObject& obj, const std::string& path) {
 
 	if (!aligned)
 		throw std::runtime_error("ConfigObject with ID \"" + obj.GetID() + "\" not found.");
+
+	obj.Serialized = true;
 }
 #pragma endregion
 
