@@ -6,7 +6,7 @@
 using SpecialFolder = Path::SpecialFolder;
 
 static const std::string CfgPath = R"(C:\1TestFig\AdditionalFile\UserData.pycfg)";
-
+// Crude example of what can be done with the API and how it's used.
 int main() {
     if (File::Exists(CfgPath)) {
         ConfigObject TestObj("User");
