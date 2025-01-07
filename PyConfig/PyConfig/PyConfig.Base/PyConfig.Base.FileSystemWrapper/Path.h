@@ -13,7 +13,8 @@ public:
 		AppData,
 		Local,
 		LocalLow,
-		Roaming
+		Roaming,
+		Application
 	};
 
 	static std::string Combine(const std::string& path1, const std::string& path2);
