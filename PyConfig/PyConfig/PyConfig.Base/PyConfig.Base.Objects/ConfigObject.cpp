@@ -1,4 +1,4 @@
-#include "ConfigObject.h"
+#include "ConfigObject.h" // Entirely reworked this class as I wasn't happy with how over-engineered it was
 
 std::unordered_map<std::string, ConfigObject*> ConfigObject::ConfigRegistry;
 
