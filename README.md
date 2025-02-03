@@ -1,11 +1,11 @@
-# PyCS
+# CoFang
 *This is my first ever major C++ project so it'll recieve a lot more polish as time goes on.*
 *I'm more than certain I can improve effeciency and memory usage.*
-# What is PyCS?
-Py Configuration System (PyCS for short) is a universal C++ config system meant for gui applications, dlls, console applications, ect.
+# What is CoFang?
+CoFang is a universal C++ config system meant for gui applications, dlls, console applications, ect.
 It's purpose is to simplify the process of using a config as much as possible.
 
-PyCS is easy to use and great for beginners.
+CoFang is easy to use and great for beginners.
 
 ## Types Supported:
 - Ints
@@ -17,7 +17,7 @@ PyCS is easy to use and great for beginners.
 - Strings
 
 ## Additional Functions
-PyCS includes a couple C#-inspired file management functions to the table such as:
+CoFang includes a couple C#-inspired file management functions to the table such as:
 - Path::Combine()
 - Path::Create()
 - File.Exists()
@@ -27,7 +27,7 @@ And more!
 # How to install
 1. Download this file and extract its contents into your project:
 
-https://github.com/PytholIsCool/PyConfig/tree/main/PyConfig/PyConfig
+https://github.com/PytholIsCool/CoFang/tree/main/CoFang/CoFang
 
-2. Include PyConfig/API_Includes.h in the files that you wish to use PyConfig in.
+2. Include CoFang/API_Includes.h in the files that you wish to use CoFang in.
 3. Enjoy!
