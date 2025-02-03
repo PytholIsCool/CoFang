@@ -43,10 +43,10 @@ void Serialization::Serialize(ConfigObject& obj, const std::string& path) {
 				configFile << std::to_string(value) << "D\n";
 
 			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, bool>)
-				configFile << (value == 1 ? R"('true')" : R"('false')") << "\n";
+				configFile << (value == 1 ? "true" : "false") << "\n";
 
 			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, char>)
-				configFile << std::string(1, value) << "\n";
+				configFile << '\'' << std::string(1, value) << "'\n";
 			else if constexpr (std::is_same_v<std::decay_t<decltype(value)>, std::string>)
 				configFile << "\"" << value << "\"" << "\n";
 			else
@@ -88,12 +88,11 @@ void Serialization::Deserialize(ConfigObject& obj, const std::string& path) {
 
 		if (!aligned && line.starts_with("  ConfigID: ")) {
 			if (line.substr(12) == obj.GetID())
-				aligned = true;                                         // Found the correct id
+				aligned = true;                                             // Found the correct id
 			continue;
 		}
 		if (line.substr(2).starts_with("ConfigID: "))
 			continue;
-
 		if (!aligned)
 			continue;
 
@@ -106,30 +105,30 @@ void Serialization::Deserialize(ConfigObject& obj, const std::string& path) {
 		std::variant<int, long, float, double, bool, char, std::string> parsedValue;
 
 		if (fieldValue.front() == '"' && fieldValue.back() == '"')
-			parsedValue = fieldValue.substr(1, fieldValue.size() - 2);  // Strings
-		else if (fieldValue.size() == 1 && !::isdigit(fieldValue[0]))
-			parsedValue = fieldValue[0];                                // Chars
+			parsedValue = fieldValue.substr(1, fieldValue.size() - 2);      // Strings
+		else if (fieldValue.front() == '\'' && fieldValue.back() == '\'')
+			parsedValue = (fieldValue.substr(1, fieldValue.size() - 2))[0]; // Chars
 		else {
-			std::string potNum = fieldValue;                            // Parse numbers and other types as before
+			std::string potNum = fieldValue;                                // Parse numbers and other types as before
 			if (!potNum.empty() && !::isdigit(potNum.back()))
-				potNum.pop_back();                                      // Remove type indicator
+				potNum.pop_back();                                          // Remove type indicator
 
 			if (std::all_of(potNum.begin(), potNum.end(), ::isdigit))
 				if (fieldValue.back() == 'L')
-					parsedValue = std::stol(potNum);                    // Longs
+					parsedValue = std::stol(potNum);                        // Longs
 				else
-					parsedValue = std::stoi(potNum);                    // Ints
+					parsedValue = std::stoi(potNum);                        // Ints
 			else if (potNum.find('.') != std::string::npos) {
 				std::string potF = potNum;
 				potF.erase(std::remove(potF.begin(), potF.end(), '.'), potF.end());
 				if (std::all_of(potF.begin(), potF.end(), ::isdigit))
 					if (fieldValue.back() == 'f')
-						parsedValue = std::stof(potNum);                // Floats
+						parsedValue = std::stof(potNum);                    // Floats
 					else if (fieldValue.back() == 'D')
-						parsedValue = std::stod(potNum);                // Doubles
+						parsedValue = std::stod(potNum);                    // Doubles
 			}
-			else if (fieldValue == R"('true')" || fieldValue == R"('false')")
-				parsedValue = (fieldValue == R"('true')");              // Bools
+			else if (fieldValue == "true" || fieldValue == "false")
+				parsedValue = (fieldValue == "true");                       // Bools
 		}
 		obj.AddField(fieldName, parsedValue);
 	}

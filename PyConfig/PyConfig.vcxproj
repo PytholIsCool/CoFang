@@ -129,18 +129,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="PyConfig\Base\ConfigObject.cpp" />
-    <ClCompile Include="PyConfig\Base\File.cpp" />
-    <ClCompile Include="PyConfig\Base\Path.cpp" />
-    <ClCompile Include="PyConfig\Base\Serialization.cpp" />
+    <ClCompile Include="PyConfig\PyConfig.Base\PyConfig.Base.Objects\ConfigObject.cpp" />
+    <ClCompile Include="PyConfig\PyConfig.Base\PyConfig.Base.FileSystemWrapper\File.cpp" />
+    <ClCompile Include="PyConfig\PyConfig.Base\PyConfig.Base.FileSystemWrapper\Path.cpp" />
+    <ClCompile Include="PyConfig\PyConfig.Base\PyConfig.Base.Objects\ConfigObjectOperators.cpp" />
+    <ClCompile Include="PyConfig\PyConfig.Base\Serialization.cpp" />
     <ClCompile Include="Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PyConfig\API_Includes.h" />
-    <ClInclude Include="PyConfig\Base\ConfigObject.h" />
-    <ClInclude Include="PyConfig\Base\File.h" />
-    <ClInclude Include="PyConfig\Base\Path.h" />
-    <ClInclude Include="PyConfig\Base\Serialization.h" />
+    <ClInclude Include="PyConfig\PyConfig.Base\PyConfig.Base.Objects\ConfigObject.h" />
+    <ClInclude Include="PyConfig\PyConfig.Base\PyConfig.Base.FileSystemWrapper\File.h" />
+    <ClInclude Include="PyConfig\PyConfig.Base\PyConfig.Base.FileSystemWrapper\Path.h" />
+    <ClInclude Include="PyConfig\PyConfig.Base\Serialization.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,6 +2,97 @@
 
 std::unordered_map<std::string, ConfigObject*> ConfigObject::ConfigRegistry;
 
+#pragma region Constructors
+// Constructor
+ConfigObject::ConfigObject(const std::string& id) : Identifier(id) {
+    if (ConfigRegistry.find(id) != ConfigRegistry.end())
+        throw std::runtime_error("Identifier already exists.");
+    Serialized = false;
+    ConfigRegistry[id] = this;
+}
+
+// Destructor
+ConfigObject::~ConfigObject() {
+    Serialized = false;
+    Fields.clear();
+    ConfigRegistry.erase(Identifier);
+}
+
+// Copy Constructor
+ConfigObject::ConfigObject(const ConfigObject& other) : Identifier(other.Identifier + "_copy"), Fields(other.Fields) {
+    while (ConfigRegistry.contains(Identifier))
+        Identifier = Identifier.append("_copy");
+    ConfigRegistry[Identifier] = this;
+    Serialized = false;
+}
+
+// Copy Assignment Operator
+ConfigObject& ConfigObject::operator=(const ConfigObject& other) {
+    if (this == &other) return *this;
+
+    ConfigRegistry.erase(Identifier);
+
+    Identifier = other.Identifier + "_copy";
+    while (ConfigRegistry.contains(Identifier))
+        Identifier = Identifier.append("_copy");
+
+    Fields = other.Fields;
+    ConfigRegistry[Identifier] = this;
+    Serialized = false;
+
+    return *this;
+}
+
+// Move Constructor
+ConfigObject::ConfigObject(ConfigObject&& other) noexcept
+    : Identifier(std::move(other.Identifier)), Fields(std::move(other.Fields)) {
+    ConfigRegistry[Identifier] = this;
+    Serialized = other.Serialized;
+    ConfigRegistry.erase(other.Identifier);
+}
+#pragma endregion
+
+#pragma region Operators
+// Move Assignment Operator
+ConfigObject& ConfigObject::operator=(ConfigObject&& other) noexcept {
+    if (this == &other) return *this;
+
+    ConfigRegistry.erase(Identifier);
+
+    Identifier = std::move(other.Identifier);
+    Fields = std::move(other.Fields);
+    Serialized = other.Serialized;
+
+    ConfigRegistry[Identifier] = this;
+
+    return *this;
+}
+
+// Pointer Assignment Operator
+ConfigObject* ConfigObject::operator=(ConfigObject* other) noexcept {
+    if (this == other || other == nullptr) return this;
+
+    ConfigRegistry.erase(Identifier);
+
+    Identifier = std::move(other->Identifier);
+    Fields = std::move(other->Fields);
+    Serialized = other->Serialized;
+
+    ConfigRegistry[Identifier] = this;
+
+    return this;
+}
+
+bool ConfigObject::operator==(const ConfigObject& other) const {
+    return this->Identifier == other.Identifier;
+}
+
+bool ConfigObject::operator==(const ConfigObject* other) const {
+    if (other == nullptr) return false;
+    return this->Identifier == other->Identifier;
+}
+#pragma endregion
+
 ConfigObject* ConfigObject::FindByID(const std::string& Identifier) {
     if (ConfigRegistry.find(Identifier) != ConfigRegistry.end())
         return ConfigRegistry.find(Identifier)->second;
