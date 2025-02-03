@@ -1,11 +1,11 @@
-# PyConfig
+# PyCS
 *This is my first ever major C++ project so it'll recieve a lot more polish as time goes on.*
 *I'm more than certain I can improve effeciency and memory usage.*
-# What is PyConfig?
-PyConfig is a universal C++ config system meant for gui applications, dlls, console applications, ect.
+# What is PyCS?
+Py Configuration System (PyCS for short) is a universal C++ config system meant for gui applications, dlls, console applications, ect.
 It's purpose is to simplify the process of using a config as much as possible.
 
-PyConfig is easy to use and great for beginners.
+PyCS is easy to use and great for beginners.
 
 ## Types Supported:
 - Ints
@@ -17,7 +17,7 @@ PyConfig is easy to use and great for beginners.
 - Strings
 
 ## Additional Functions
-PyConfig includes a couple C#-inspired file management functions to the table such as:
+PyCS includes a couple C#-inspired file management functions to the table such as:
 - Path::Combine()
 - Path::Create()
 - File.Exists()
