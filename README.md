@@ -25,9 +25,9 @@ CoFang includes a couple C#-inspired file management functions to the table such
 And more!
 
 # How to install
-1. Download this file and extract its contents into your project:
+1. Download the CoFang.zip file attached to the most recent release and extract its contents into your project:
 
-https://github.com/PytholIsCool/CoFang/tree/main/CoFang/CoFang
+https://github.com/PytholIsCool/CoFang/releases/latest
 
 2. Include CoFang/API_Includes.h in the files that you wish to use CoFang in.
 3. Enjoy!
