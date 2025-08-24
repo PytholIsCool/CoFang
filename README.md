@@ -1,4 +1,4 @@
-# CoFang
+# CoFang (Deprecated due to poor code quality)
 *This is my first ever major C++ project so it'll recieve a lot more polish as time goes on.*
 *I'm more than certain I can improve effeciency and memory usage.*
 # What is CoFang?
